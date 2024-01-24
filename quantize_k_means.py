@@ -5,7 +5,7 @@ img = Image.open("puppy.jpg") # Just put the local filename in quotes.
 # img.show() # Send the image to your OS to be displayed as a temporary file (the before picture)
 WIDTH, HEIGHT = img.size
 pix = img.load() # Pix is a pixel manipulation object; we can assign pixel values and img will change as we do so.
-K = 8
+K = 27
 """
 Chooses the initial K pixels to begin K-means clustering
 Input: N/A
@@ -69,21 +69,11 @@ def calc_averages(means, result_list):
         means[i] = new_avg # Change this to be the newly calculated mean
     return means
 
-def find_best_mean(means, curr_rgb):
-    smallest_error = 1000000
-    smallest_mean = None
-    for i in range(len(means)):
-        error = squared_error(means[i], curr_rgb)
-        if error > smallest_error:
-            smallest_error = error
-            smallest_mean = i
-
 def k_means():
     means, result_list = choose_initial_pixels()
 
     means = calc_averages(means, result_list) # Recalculate the means based on what we added in the first batch
-    print("first mean")
-    print(means)
+
     old_means = [means[i] for i in range(len(means))] # Get the old means
     changed = 1000
     while changed > 0:
@@ -103,12 +93,13 @@ def k_means():
 
 
         # Now we will iterate through the to_move list and move all the values as needed
+        t = 0
         for value in to_move:
-            start_index, end_index, rgb_info = value
+            # start_index, end_index, rgb_info = value
             # # Before we move the value, first recalculate the mean for both of the means involved in this
             # r, g, b = rgb_info[0] # Get the rgb values for the one we are trying to move
             # occurences = rgb_info[1] # Need to account for the fact that multiple of this rgb value may appear
-
+            
             # # RECALCULATE for the mean we are removing this from:
             # old_r, old_g, old_b = means[start_index]
             # old_length = len(result_list[start_index])
@@ -135,26 +126,37 @@ def k_means():
 
             # means[end_index] = (new_r, new_g, new_b)
             
-            result_list[start_index].remove(rgb_info) # Remove it from the original place
-            result_list[end_index].append(rgb_info) # Add it to the new mean that works best for it
-        # means = calc_averages(means, result_list)
+            # print(len(result_list[start_index]))
+            # result_list[start_index].remove(rgb_info) # Remove it from the original place
+            # result_list[end_index].append(rgb_info) # Add it to the new mean that works best for it
+
+            t += 1
+        means = calc_averages(means, result_list)
         print(means)
+        new_means = [means[i] for i in range(len(means))]
+        changed = 0
+        for i in range(len(new_means)):
+            if new_means[i] != old_means[i]:
+                changed += 1
+            old_means[i] = new_means[i]
+    return means, result_list
 
-        # new_means = [mean[i] for mean in means]
-        # changed = 0
-        # for i in range(len(new_means)):
-        #     if new_means[i] != old_means[i]:
-        #         changed += 1
-        #     old_means[i] = new_means[i]
-        changed -= 1
-    return means
+def process_results(means, result_list):
+    color_map = dict()
+    for i in range(len(result_list)):
+        for j in range(len(result_list[i])):
+            color_map[result_list[i][j][0]] = means[i] # Map all the colors to the mean it will be associated with
 
-def count_list(means):
-    pass
-
+    for h in range(HEIGHT):
+        for w in range(WIDTH):
+            r,g,b = color_map[pix[w,h]]
+            pix[w,h] = (int(r), int(g), int(b))
+    img.show()
+    img.save("my_image.png")
+    
 
 def main():
-    k_means()
-
+    means, result_list = k_means()
+    process_results(means, result_list)
 if __name__ == "__main__":
     main()
