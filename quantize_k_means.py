@@ -23,7 +23,7 @@ def choose_initial_pixels():
     result_list = list()
     for color in colors:
         means.append(color) # Keep a list of all the initial "means"
-        result_list.append(list()) # Instantiate an empty list of lists to keep track of which rgb values go to which mean based on associated index
+        result_list.append(set()) # Instantiate an empty list of lists to keep track of which rgb values go to which mean based on associated index
     
     # First pass, count up all the colors
     count = dict()
@@ -73,7 +73,7 @@ def k_means():
     means, result_list = choose_initial_pixels()
 
     means = calc_averages(means, result_list) # Recalculate the means based on what we added in the first batch
-
+    print(means)
     old_means = [means[i] for i in range(len(means))] # Get the old means
     changed = 1000
     while changed > 0:
@@ -95,44 +95,13 @@ def k_means():
         # Now we will iterate through the to_move list and move all the values as needed
         t = 0
         for value in to_move:
-            # start_index, end_index, rgb_info = value
-            # # Before we move the value, first recalculate the mean for both of the means involved in this
-            # r, g, b = rgb_info[0] # Get the rgb values for the one we are trying to move
-            # occurences = rgb_info[1] # Need to account for the fact that multiple of this rgb value may appear
-            
-            # # RECALCULATE for the mean we are removing this from:
-            # old_r, old_g, old_b = means[start_index]
-            # old_length = len(result_list[start_index])
-            # old_r *= old_length # Get the original total values before dividing so that we can subtract the current rgb values
-            # old_g *= old_length
-            # old_b *= old_length
+            start_index, end_index, rgb_info = value
+            result_list[start_index].remove(rgb_info) # Remove it from the original place
+            result_list[end_index].append(rgb_info) # Add it to the new mean that works best for it
 
-            # old_r = (old_r - (r*occurences)) / (old_length-occurences) # Recalculate the new rgb values for this mean
-            # old_g = (old_g - (g*occurences)) / (old_length-occurences)
-            # old_b = (old_b - (b*occurences)) / (old_length-occurences)
+        means = calc_averages(means, result_list) # Recalculate the means based on where we moved everything
 
-            # means[start_index] = (old_r, old_g, old_b)
 
-            # # RECALCULATE for the mean we are add this to:
-            # new_r, new_g, new_b = means[end_index]
-            # new_length = len(result_list[end_index])
-            # new_r *= new_length # Get the original totals
-            # new_g *= new_length
-            # new_b *= new_length
-
-            # new_r = (new_r + (r*occurences)) / (new_length+occurences) # Recalculate the new rgb values for this mean
-            # new_g = (new_g + (g*occurences)) / (new_length+occurences)
-            # new_b = (new_b + (b*occurences)) / (new_length+occurences)
-
-            # means[end_index] = (new_r, new_g, new_b)
-            
-            # print(len(result_list[start_index]))
-            # result_list[start_index].remove(rgb_info) # Remove it from the original place
-            # result_list[end_index].append(rgb_info) # Add it to the new mean that works best for it
-
-            t += 1
-        means = calc_averages(means, result_list)
-        print(means)
         new_means = [means[i] for i in range(len(means))]
         changed = 0
         for i in range(len(new_means)):
