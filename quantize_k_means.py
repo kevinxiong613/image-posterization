@@ -5,7 +5,7 @@ img = Image.open("puppy.jpg") # Just put the local filename in quotes.
 # img.show() # Send the image to your OS to be displayed as a temporary file (the before picture)
 WIDTH, HEIGHT = img.size
 pix = img.load() # Pix is a pixel manipulation object; we can assign pixel values and img will change as we do so.
-K = 27
+K = 8
 """
 Chooses the initial K pixels to begin K-means clustering
 Input: N/A
@@ -32,7 +32,6 @@ def choose_initial_pixels():
             rgb = pix[w,h]
             count[rgb] = count.get(rgb, 0) + 1
     
-    rgb_list = list()
     for color in count:
         rgb = color  # Find the mean with the lowest squared error for this rgb value
         smallest_error = 100000000000 # Initialize to some random large arbitrary value
@@ -42,8 +41,8 @@ def choose_initial_pixels():
             if error < smallest_error: # Get the index of the mean with the smallest error
                 smallest_error = error
                 smallest_mean = i
-        result_list[smallest_mean].append((color, count[color])) # Add this rgb value to the same index that the smallest_mean was at as a tuple with how many of this color there are too
-        rgb_list.append((color, count[color])) # Keep an entire list seperately too for us to iterate through, this way we can iterate through this list instead of result_list so we can make changes to result_list as we go
+        result_list[smallest_mean].add((color, count[color])) # Add this rgb value to the same index that the smallest_mean was at as a tuple with how many of this color there are too
+
     return means, result_list
 
 """
@@ -52,15 +51,16 @@ Calculate squared error between two RGB values by doing summation (v1-v2)^2
 def squared_error(rgb1, rgb2):
     return (rgb1[0]-rgb2[0]) ** 2 + (rgb1[1]-rgb2[1]) ** 2 + (rgb1[2]-rgb2[2]) ** 2
 
+
 def calc_averages(means, result_list):
     for i in range(len(result_list)):
         avg_r = 0
         avg_g = 0
         avg_b = 0
         count = 0
-        for j in range(len(result_list[i])): # Iterate through all the rgb values for this mean
-            curr_rgb = result_list[i][j][0]
-            rgb_occurences = result_list[i][j][1] # Get the occurences because they DO play a factor
+        for rgb_tuple in result_list[i]: # Iterate through all the rgb values for this mean
+            curr_rgb = rgb_tuple[0]
+            rgb_occurences = rgb_tuple[1] # Get the occurences because they DO play a factor
             avg_r += curr_rgb[0] * rgb_occurences
             avg_g += curr_rgb[1] * rgb_occurences
             avg_b += curr_rgb[2] * rgb_occurences
@@ -79,8 +79,8 @@ def k_means():
     while changed > 0:
         to_move = list() # Keep track of 1. the index of the mean the rgb is currently at 2. the index of the mean we will move it to 3. The tuple representing the rgb itself and it's count to remove it
         for i in range(len(result_list)): # Iterate through every rgb value and see if we need to move it
-            for j in range(len(result_list[i])): # Go through all the rgb values associated with this particular mean
-                curr_rgb = result_list[i][j][0]
+            for rgb_tuple in result_list[i]: # Go through all the rgb values associated with this particular mean
+                curr_rgb = rgb_tuple[0]
                 smallest_error = 1000000
                 smallest_mean = -1
                 for mean_index in range(len(means)): # Find the index of the mean that works best for this rgb
@@ -89,18 +89,16 @@ def k_means():
                         smallest_error = error
                         smallest_mean = mean_index
                 if smallest_mean != i: # If the smallest error mean isn't at the mean this is currently at
-                    to_move.append((i, smallest_mean, result_list[i][j]))
+                    to_move.append((i, smallest_mean, rgb_tuple))
 
 
         # Now we will iterate through the to_move list and move all the values as needed
-        t = 0
         for value in to_move:
             start_index, end_index, rgb_info = value
             result_list[start_index].remove(rgb_info) # Remove it from the original place
-            result_list[end_index].append(rgb_info) # Add it to the new mean that works best for it
+            result_list[end_index].add(rgb_info) # Add it to the new mean that works best for it
 
         means = calc_averages(means, result_list) # Recalculate the means based on where we moved everything
-
 
         new_means = [means[i] for i in range(len(means))]
         changed = 0
@@ -113,9 +111,8 @@ def k_means():
 def process_results(means, result_list):
     color_map = dict()
     for i in range(len(result_list)):
-        for j in range(len(result_list[i])):
-            color_map[result_list[i][j][0]] = means[i] # Map all the colors to the mean it will be associated with
-
+        for rgb_tuple in result_list[i]:
+            color_map[rgb_tuple[0]] = means[i] # Map all the colors to the mean it will be associated with
     for h in range(HEIGHT):
         for w in range(WIDTH):
             r,g,b = color_map[pix[w,h]]
