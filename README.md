@@ -9,3 +9,13 @@ Example Input:
 This is a picture of an Eagle
 
 ![alt text](https://raw.githubusercontent.com/kevxemail/color_space_vector_quantization/main/eagle.png)
+
+Example Output:
+Here is the result of posterizing it with 8 different colors
+
+![alt text](https://raw.githubusercontent.com/kevxemail/color_space_vector_quantization/main/eagle-8-means.png)
+
+
+Here is the result of posterizing it with 27 different colors
+![alt text](https://raw.githubusercontent.com/kevxemail/color_space_vector_quantization/main/eagle-27-means.png)
+
