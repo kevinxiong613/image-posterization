@@ -19,6 +19,7 @@ Here is the result of posterizing it with 27 different colors
 
 
 This is a picture of a rocket
+
 ![alt text](https://raw.githubusercontent.com/kevxemail/color_space_vector_quantization/main/rocket.png)
 
 
