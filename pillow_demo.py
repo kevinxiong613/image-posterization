@@ -1,5 +1,5 @@
 from PIL import Image
-img = Image.open("puppy.jpg") # Just put the local filename in quotes.
+img = Image.open("rocket.png") # Just put the local filename in quotes.
 img.show() # Send the image to your OS to be displayed as a temporary file
 print(img.size) # A tuple. Note: width first THEN height. PIL goes [x, y] with y counting from the top of the frame.
 pix = img.load() # Pix is a pixel manipulation object; we can assign pixel values and img will change as we do so.
