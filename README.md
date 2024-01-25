@@ -31,4 +31,3 @@ Here is the result of posterizing it with 8 different colors
 
 Here is the result of posterizing it with 27 different colors
 
-![alt text](https://raw.githubusercontent.com/kevxemail/color_space_vector_quantization/main/rocket-27-means.png)
