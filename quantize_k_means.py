@@ -2,11 +2,11 @@ import random
 from PIL import Image
 from time import perf_counter
 
-img = Image.open("rocket.png") # Just put the local filename in quotes.
+img = Image.open("images/rocket.png") # Just put the local filename in quotes.
 img.show() # Send the image to your OS to be displayed as a temporary file (the before picture)
 WIDTH, HEIGHT = img.size[0], img.size[1]
 pix = img.load() # Pix is a pixel manipulation object; we can assign pixel values and img will change as we do so.
-K = 27
+K = 8
 
 """
 Chooses the initial K pixels to begin K-means clustering randomly
@@ -230,6 +230,8 @@ def process_results(means, result_list):
 def main():
     start = perf_counter()
     means, result_list = k_means()
+    print(means)
+    print(result_list[0])
     process_results(means, result_list)
     end = perf_counter()
     print("time", end-start)
