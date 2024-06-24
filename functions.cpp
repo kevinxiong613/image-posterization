@@ -1,7 +1,5 @@
 #include <iostream>
-#include "functions.h"
-
-
+#include "functions.hpp"
 /*
 Uses the results from k_means clustering to edit the image and save it
 Input:
@@ -14,6 +12,7 @@ void process_results(const std::vector<double>& means, const std::vector<double>
     // std::unordered_map<std::string, int> colorMap;
     for (std::size_t i = 0; i < resultList.size(); i++) { 
         std::cout << means[i] << " ";
-        std::cout << resultList[i] << std::endl; 
+        std::cout << resultList[i] << std::endl;
     }
 }
+
