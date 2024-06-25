@@ -231,6 +231,7 @@ def main():
     start = perf_counter()
     means, result_list = k_means()
     print(means[0], len(means))
+    print(result_list[0])
     # print(result_list[0])
     process_results(means, result_list)
     end = perf_counter()
