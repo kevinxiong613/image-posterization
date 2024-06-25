@@ -2,5 +2,5 @@ main.dSYM
 .vscode
 notes
 opencv
-opencv_contrib
 build_opencv
+build

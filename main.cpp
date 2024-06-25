@@ -5,7 +5,6 @@
 #include <opencv2/opencv.hpp>
 
 int main() {
-    cv::Mat image = cv::imread("rocket-27-means.png");
 
     std::vector<double> means({"0.2", "0.3"});
     std::vector<double> t2({"0.2", "0.3"});
