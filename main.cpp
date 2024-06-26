@@ -9,14 +9,17 @@ int main() {
     if (image.empty()) {
         std::cerr << "Could not open or find the image!" << std::endl;
         return -1;
-    }
-        // Modify the pixel values
-    for (int y = 0; y < image.rows; y++) {
-        for (int x = 0; x < image.cols; x++) {
-            cv::Vec3b &color = image.at<cv::Vec3b>(y, x);
-            color[0] = 0; // Set Blue channel to 0
+    } 
+
+    std::vector<std::vector<uchar>> pixels = select_pixels(image, 4); // Call initialize function
+
+    for (const auto& row : pixels) {
+        for (const auto& pixel : row) {
+            std::cout << static_cast<int>(pixel) << " "; // Assuming uchar is printed as integer
         }
+        std::cout << std::endl; // New line for each row
     }
+
 
     // Save the modified image
     cv::imwrite("../modified_image.jpg", image);
@@ -24,5 +27,6 @@ int main() {
     std::vector<double> means({"0.2", "0.3"});
     std::vector<double> t2({"0.2", "0.3"});
     process_results(means, t2);
+
     return 0;
 }
